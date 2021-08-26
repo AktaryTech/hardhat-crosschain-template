@@ -1,0 +1,36 @@
+{
+  "name": "hardhat-cross-chain",
+  "version": "1.0.0",
+  "description": "Template for cross-chain testing on Hardhat",
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "scripts": {
+    "friendly-msg": "mkdir -p logs && echo 'Starting deployment. Check logs for details :)'",
+    "fork:ethereum": "yarn friendly-msg && HH_CHAIN_ID=69 yarn hardhat customFork --n ethereum > ./logs/ethereum-fork-node.log",
+    "fork:polygon": "yarn friendly-msg && HH_CHAIN_ID=420 yarn hardhat customFork --n polygon > ./logs/polygon-fork-node.log",
+    "fork:both": "concurrently -n ethereum,polygon \"yarn fork:ethereum\" \"yarn fork:polygon\"",
+    "deploy": "yarn hardhat deploy",
+    "clean": "yarn hardhat clean",
+    "compile": "yarn hardhat compile",
+    "test": "yarn hardhat test"
+  },
+  "keywords": [],
+  "author": "Dan Hepworth <dhepworth@aktarytech.com>",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "^4.3.0",
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.7.1",
+    "chai": "^4.3.4",
+    "concurrently": "^6.4.0",
+    "dotenv": "^10.0.0",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.4.5",
+    "hardhat": "^2.6.1",
+    "hardhat-deploy": "^0.9.0",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.3.5"
+  }
+}
