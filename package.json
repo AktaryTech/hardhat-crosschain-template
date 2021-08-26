@@ -1,0 +1,32 @@
+{
+  "name": "hardhat-cross-chain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "fork:ethereum": "npx hardhat node --no-deploy --network hardhat  --fork https://eth-mainnet.alchemyapi.io/v2/dar_2Cg1tGa4qpm20_0xm1qF2KV_69CA",
+    "fork:polygon": "npx hardhat node --no-deploy --network hardhat  --fork https://polygon-mainnet.g.alchemy.com/v2/-0MnMXJ2Hui5Dr9sczsGt-rkUQNoz7yW",
+    "deploy": "npx hardhat deploy",
+    "test": "npx hardhat test",
+    "docker": "docker-compose up"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "^4.3.0",
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.7.1",
+    "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.4.5",
+    "hardhat": "^2.6.1",
+    "hardhat-deploy": "^0.9.0",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.3.5"
+  }
+}

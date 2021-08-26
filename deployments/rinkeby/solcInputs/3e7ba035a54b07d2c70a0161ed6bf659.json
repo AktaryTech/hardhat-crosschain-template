@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/HelloWorlds.sol": {
+      "content": "//SPDX-License-Identifier: Unlicense\npragma solidity ^0.8.0;\n\ncontract HelloWorlds {\n    function getChain() public view returns (uint, string memory) {\n        uint chainId = block.chainid; \n        if (chainId == 4) {\n            return (chainId, \"rinkeby\");\n        }\n        else if (chainId == 80001) {\n            return (chainId, \"mumbai\");\n        }\n        else if (chainId == 1) {\n            return (chainId, \"ethereum\");\n        }\n        else if (chainId == 137) {\n            return (chainId, \"polygon\");\n        }\n        else {\n            return (chainId, \"IDK what this is\");\n        }\n    }\n\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
