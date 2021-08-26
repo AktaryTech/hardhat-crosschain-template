@@ -10,7 +10,7 @@ This repo is set up with the following:
 What's here currently is a test contract that retrieves its chainId (to prepare for deploying the same contract on multiple networks). It has a set of small unit tests to ensure you can deploy it to mulitple EVMs. 
 
 In addition, there's a Dockerfile and docker-compose to set up two docker containers and images for concurrent testing on a local hardat network using forked ethereum mainnet and forked polygon mainnet.
-**Note** This creates two docker images that are 1.72 GB each. They're basically identical except for the script they run and the port they use on your computer. Perhaps there's a more efficient way to set this up? 
+**Note:** This creates two docker images that are 1.72 GB each. They're basically identical except for the script they run and the port they use on your computer. Perhaps there's a more efficient way to set this up? 
 
 # Setup
 1) Run `npm install`
