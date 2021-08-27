@@ -14,7 +14,7 @@ export const ethUrl: string = ("https://eth-mainnet.alchemyapi.io/v2/" + ALCHEMY
 export const polyUrl: string = `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_POLYGON_KEY}`;
 
 const config = {
-  solidity: '0.8.3',
+  solidity: '0.8.4',
   networks: {
     rinkeby: {
       url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_RINKEBY_KEY}`,

@@ -28,6 +28,8 @@ contract Bridge is Ownable {
 
     event Deposit(address indexed user, address[] tokens, uint256[] tokenAmounts, uint256 ethAmount);
     event Withdraw(address indexed user, address[] tokens, uint256[] tokenAmounts, uint256 ethAmount);
+    event TokenBridgeabilityUpdated(address asset, bool state);
+    event UserTokenLocationUpdated(address user, address asset, bool state);
 
     function deposit(
         address[] memory tokens, 
@@ -141,9 +143,11 @@ contract Bridge is Ownable {
         }
     }
 
+    
     function setTokenBridgeability(address asset) external onlyOwner {
         (, bool currState) = tokenDetails(asset);
         _tokens[asset].canBridge = !currState;
+        emit TokenBridgeabilityUpdated(asset, _tokens[asset].canBridge);
     }
 
     function setTokenBalance(address asset, uint256 amount) internal {
@@ -157,6 +161,7 @@ contract Bridge is Ownable {
     function setUserTokenLocation(address asset, address account) external onlyOwner {
         (, bool currState) = userTokenBalance(asset, account);
         _balances[asset][account].onThisChain = !currState;
+        emit UserTokenLocationUpdated(account, asset, _balances[asset][account].onThisChain);
     }
     
     function tokenDetails(address asset) public view returns (uint256, bool) {
