@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "IWeth9",
-  "sourceName": "contracts/interfaces/IWeth9.sol",
+  "contractName": "IWrappedNativeCurrency",
+  "sourceName": "contracts/interfaces/IWrappedNativeCurrency.sol",
   "abi": [
     {
       "anonymous": false,

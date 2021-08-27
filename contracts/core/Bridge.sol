@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../interfaces/IWeth9.sol";
+import "../interfaces/IWrappedNativeCurrency.sol";
 
 contract Bridge is Ownable {
     
@@ -24,32 +24,41 @@ contract Bridge is Ownable {
     // token --> wallet
     mapping(address => mapping(address => CrossChainBalance)) private _balances;
 
-    address public wethAddress = address(0); // hardcoded for now 
+    address public wrappedNativeCurrencyAddress; 
+    IWrappedNativeCurrency public wrappedToken; 
 
-    event Deposit(address indexed user, address[] tokens, uint256[] tokenAmounts, uint256 ethAmount);
-    event Withdraw(address indexed user, address[] tokens, uint256[] tokenAmounts, uint256 ethAmount);
-    event TokenBridgeabilityUpdated(address asset, bool state);
-    event UserTokenLocationUpdated(address user, address asset, bool state);
+    // sets wrapped token address and initial set of bridgeable coins
+    constructor(address wrappedTokenAddr, address[] memory tokens) {
+       wrappedNativeCurrencyAddress = wrappedTokenAddr;
+       wrappedToken = IWrappedNativeCurrency(wrappedNativeCurrencyAddress); 
+       for(uint256 tokenId; tokenId < tokens.length; tokenId++) { 
+           _tokens[tokens[tokenId]].canBridge = true;
+       }
+    }
+
+    event Deposit(address indexed user, address[] tokens, uint256[] tokenAmounts, uint256 nativeAmount, uint timestamp);
+    event Withdraw(address indexed user, address[] tokens, uint256[] tokenAmounts, uint256 nativeAmount, uint timestamp);
+    event TokenBridgeabilityUpdated(address asset, bool state, uint timestamp);
+    event UserTokenLocationUpdated(address user, address asset, bool state, uint timestamp);
 
     function deposit(
         address[] memory tokens, 
         uint256[] memory amounts
     ) external payable {
         if(msg.value > 0) {
-            // Convert ETH to WETH
-            IWeth9 weth = IWeth9(wethAddress);
-            weth.deposit{value: msg.value}();
+            // Convert native to wrapped
+            wrappedToken.deposit{value: msg.value}();
         }
         
         depositHandler(msg.sender, tokens, amounts, msg.value);
-        emit Deposit(msg.sender, tokens, amounts, msg.value);
+        emit Deposit(msg.sender, tokens, amounts, msg.value, block.timestamp);
     }
 
     function depositHandler(
         address depositor, 
         address[] memory tokens, 
         uint256[] memory amounts, 
-        uint256 ethAmount
+        uint256 nativeAmount
     ) internal {
         for(uint256 tokenId; tokenId < tokens.length; tokenId++) {
             // Token must be accepting deposits
@@ -79,39 +88,39 @@ contract Bridge is Ownable {
             setUserTokenBalance(tokens[tokenId], depositor, userBalance + actualAmount);
         }
 
-        if(ethAmount > 0) {
+        if(nativeAmount > 0) {
             // Update WETH balances
-            (uint tokenBalance, ) = tokenDetails(wethAddress);
-            (uint256 userBalance, ) = userTokenBalance(depositor, wethAddress);
+            (uint tokenBalance, ) = tokenDetails(wrappedNativeCurrencyAddress);
+            (uint256 userBalance, ) = userTokenBalance(depositor, wrappedNativeCurrencyAddress);
             
-            setTokenBalance(wethAddress, tokenBalance + ethAmount);
-            setUserTokenBalance(wethAddress, depositor, userBalance + ethAmount);
+            setTokenBalance(wrappedNativeCurrencyAddress, tokenBalance + nativeAmount);
+            setUserTokenBalance(wrappedNativeCurrencyAddress, depositor, userBalance + nativeAmount);
         }
     }
     
     function withdraw(
         address[] memory tokens, 
         uint256[] memory amounts, 
-        bool withdrawWethAsEth
+        bool withdrawWrappedAsUnwrapped
     ) external {
-        uint256 ethWithdrawn = withdrawHandler(msg.sender, tokens, amounts, withdrawWethAsEth);
+        uint256 nativeWithdrawn = withdrawHandler(msg.sender, tokens, amounts, withdrawWrappedAsUnwrapped);
 
-        if (ethWithdrawn > 0) {
-            IWeth9(wethAddress).withdraw(ethWithdrawn);
+        if (nativeWithdrawn > 0) {
+            wrappedToken.withdraw(nativeWithdrawn);
 
-            payable(msg.sender).transfer(ethWithdrawn);
+            payable(msg.sender).transfer(nativeWithdrawn);
         }
 
-        emit Withdraw(msg.sender, tokens, amounts, ethWithdrawn);
+        emit Withdraw(msg.sender, tokens, amounts, nativeWithdrawn, block.timestamp);
     }
 
     function withdrawHandler(
         address recipient, 
         address[] memory tokens, 
         uint256[] memory amounts, 
-        bool withdrawWethAsEth) 
+        bool withdrawWrappedAsUnwrapped) 
     private returns (
-        uint256 ethWithdrawn
+        uint256 nativeWithdrawn
     ) {
         require(tokens.length == amounts.length, 
             "WithdrawHandler: Tokens array length does not match amounts array length");
@@ -121,7 +130,7 @@ contract Bridge is Ownable {
                 "WithdrawHandler: Withdraw amount must be greater than zero");
             (uint tokenBalance, bool tokenState) = tokenDetails(tokens[tokenId]);
             require(tokenState,
-                "WithdrawHandler: This token is not accepting withdrawals");
+                "WithdrawHandler: This token is not able to be bridged");
 
             (uint256 userBalance, bool userState) = userTokenBalance(recipient, tokens[tokenId]);
             require(amounts[tokenId] <= userBalance, 
@@ -133,8 +142,8 @@ contract Bridge is Ownable {
             setTokenBalance(tokens[tokenId], tokenBalance - amounts[tokenId]);
             setUserTokenBalance(tokens[tokenId], recipient, userBalance - amounts[tokenId]);
 
-            if(tokens[tokenId] == wethAddress && withdrawWethAsEth) {
-                ethWithdrawn = amounts[tokenId];
+            if(tokens[tokenId] == wrappedNativeCurrencyAddress && withdrawWrappedAsUnwrapped) {
+                nativeWithdrawn = amounts[tokenId];
             } else {
                 // Send the tokens back to specified recipient
                 IERC20Metadata(tokens[tokenId])
@@ -147,7 +156,7 @@ contract Bridge is Ownable {
     function setTokenBridgeability(address asset) external onlyOwner {
         (, bool currState) = tokenDetails(asset);
         _tokens[asset].canBridge = !currState;
-        emit TokenBridgeabilityUpdated(asset, _tokens[asset].canBridge);
+        emit TokenBridgeabilityUpdated(asset, _tokens[asset].canBridge, block.timestamp);
     }
 
     function setTokenBalance(address asset, uint256 amount) internal {
@@ -161,7 +170,7 @@ contract Bridge is Ownable {
     function setUserTokenLocation(address asset, address account) external onlyOwner {
         (, bool currState) = userTokenBalance(asset, account);
         _balances[asset][account].onThisChain = !currState;
-        emit UserTokenLocationUpdated(account, asset, _balances[asset][account].onThisChain);
+        emit UserTokenLocationUpdated(account, asset, _balances[asset][account].onThisChain, block.timestamp);
     }
     
     function tokenDetails(address asset) public view returns (uint256, bool) {
