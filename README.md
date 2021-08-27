@@ -18,16 +18,6 @@ In addition, there's a Dockerfile and docker-compose to set up two docker contai
 3) To run local unit tests, run `npm run test`
 4) To set up Docker nodes for cross-chain testing, run `npm run docker`. To exit, press `Ctrl+C`. To remove the containers (if you're running this frequently this will slow down things), run `docker-compose down`.
 
-# Token Addresses
-Polygon Mainnet:
-- Wrapped Ether = 0x7ceb23fd6bc0add59e62ac25578270cff1b9f619
-- Matic = 0x0000000000000000000000000000000000001010
-Ethereum Mainnet:
-- 
-
-mapping token -> address --> cross chain balance struct {net amount: uint, on-this-chain: bool}
-Ether[Bob] = {amount: 20, on-this-chain: true}
-
 # EXAMPLE:
 0xNodes Ethereum contract ("Nodes Eth") has balance of 100 ETH: 80 belonging to other users, 20 available
 Bob has 0 on Nodes Eth
