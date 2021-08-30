@@ -14,8 +14,9 @@ describe("Bridge - unit tests", function () {
         [deployer, user] = await ethers.getSigners();
         const bridgeFactory: ContractFactory = await ethers.getContractFactory("Bridge", deployer);
         mockWrappedToken = await waffle.deployMockContract(deployer, IWrappedNativeCurrency.abi);
-        mockERC20 = await waffle.deployMockContract(deployer, IERC20Meta.abi)
+        mockERC20 = await waffle.deployMockContract(deployer, IERC20Meta.abi);
         bridge = await bridgeFactory.deploy(mockWrappedToken.address, [mockERC20.address]);
+        
     });
 
     describe("Constructor", function () {
@@ -30,6 +31,17 @@ describe("Bridge - unit tests", function () {
     describe("Deposit", function () {
         let resp: any;
         beforeEach("User deposits 5 units of the native currency and 10 of the mockErc20", async function () {
+            // await mockERC20.mock.transfer
+            // .withArgs(await user.getAddress(), ethers.utils.parseEther("10"))
+            // .returns(true);
+            await mockERC20.mock.balanceOf
+            .withArgs(bridge.address)
+            .returns(ethers.utils.parseEther("0"));
+            await mockERC20.mock.balanceOf
+            .withArgs(await user.getAddress())
+            .returns(ethers.utils.parseEther("10"));
+            await mockWrappedToken.mock.deposit
+            .returns();
             resp = await bridge.connect(user)
             .deposit([mockERC20.address], [ethers.utils.parseEther("10")], {value: ethers.utils.parseEther("5")});
         });

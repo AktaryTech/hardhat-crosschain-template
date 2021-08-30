@@ -5,7 +5,7 @@ import * as data from '../artifacts/contracts/core/HelloWorlds.sol/HelloWorlds.j
 import { BigNumber, Contract, Wallet, ContractFactory } from "ethers";
 import config from "../hardhat.config";
 
-describe("Hello Worlds", function () {
+/* describe("Hello Worlds", function () {
   it("Should return the ethereum mainnet chainid", async function () {
     const options = {fork: ethUrl}
     const provider: MockProvider = new MockProvider({ganacheOptions: options});
@@ -57,4 +57,4 @@ describe("Hello Worlds", function () {
     expect(res[0].eq(resultNumber));
     expect(res[1]).to.equal(chain);
   });
-});
+}); */
