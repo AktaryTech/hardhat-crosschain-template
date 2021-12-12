@@ -1,18 +1,21 @@
 {
   "name": "hardhat-cross-chain",
   "version": "1.0.0",
-  "description": "",
+  "description": "Template for cross-chain testing on Hardhat",
+  "license": "UNLICENSED",
   "main": "index.js",
   "scripts": {
-    "fork:ethereum": "npx hardhat node --no-deploy --network hardhat  --fork https://eth-mainnet.alchemyapi.io/v2/dar_2Cg1tGa4qpm20_0xm1qF2KV_69CA",
-    "fork:polygon": "npx hardhat node --no-deploy --network hardhat  --fork https://polygon-mainnet.g.alchemy.com/v2/-0MnMXJ2Hui5Dr9sczsGt-rkUQNoz7yW",
-    "deploy": "npx hardhat deploy",
-    "test": "npx hardhat test",
-    "docker": "docker-compose up"
+    "friendly-msg": "mkdir -p logs && echo 'Starting deployment. Check logs for details :)'",
+    "fork:ethereum": "yarn friendly-msg && HH_CHAIN_ID=69 yarn hardhat customFork --n ethereum > ./logs/ethereum-fork-node.log",
+    "fork:polygon": "yarn friendly-msg && HH_CHAIN_ID=420 yarn hardhat customFork --n polygon > ./logs/polygon-fork-node.log",
+    "fork:both": "concurrently -n ethereum,polygon \"yarn fork:ethereum\" \"yarn fork:polygon\"",
+    "deploy": "yarn hardhat deploy",
+    "clean": "yarn hardhat clean",
+    "compile": "yarn hardhat compile",
+    "test": "yarn hardhat test"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Dan Hepworth <dhepworth@aktarytech.com>",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
@@ -21,6 +24,7 @@
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.7.1",
     "chai": "^4.3.4",
+    "concurrently": "^6.4.0",
     "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.5",
