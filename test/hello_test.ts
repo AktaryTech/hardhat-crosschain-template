@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { deployContract, MockProvider} from 'ethereum-waffle';
 import { ethUrl, polyUrl } from '../hardhat.config';
 import * as data from '../artifacts/contracts/HelloWorlds.sol/HelloWorlds.json'
-import { BigNumber, Contract, Wallet, ContractFactory } from "ethers";
+import { BigNumber, Contract, Wallet } from "ethers";
 import config from "../hardhat.config";
 
 describe("Hello Worlds", function () {

@@ -3,8 +3,6 @@ import '@nomiclabs/hardhat-waffle';
 import 'hardhat-deploy';
 import { task } from 'hardhat/config';
 import * as dotenv from 'dotenv';
-import { HardhatUserConfig } from 'hardhat/config';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
 
 dotenv.config();
 /* This loads the variables in your .env file to `process.env` */
