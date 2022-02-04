@@ -16,11 +16,11 @@ In addition, there are configurations to be able to run and test on two networks
 2) Create `.env` based on `.env.example`. Leave the `HH_CHAIN_ID` as is, and add a private key to deploy as well as provider URLs, which are retrievable on Infura or Alchemy.
 
 # Scripts
-`yarn fork:ethereum` - runs fork of Ethereum mainnet
-`yarn fork:polygon` - runs fork of Polygon mainnet
-`yarn fork:both` - runs both local forks
-`yarn deploy` - deploys the `HelloWorlds` contract
-`yarn clean` - removes old build
-`yarn compile` - compiles contracts
-`yarn test` - runs tests in `./test`
+- `yarn fork:ethereum` - runs fork of Ethereum mainnet
+- `yarn fork:polygon` - runs fork of Polygon mainnet
+- `yarn fork:both` - runs both local forks
+- `yarn deploy` - deploys the `HelloWorlds` contract
+- `yarn clean` - removes old build
+- `yarn compile` - compiles contracts
+- `yarn test` - runs tests in `./test`
 
